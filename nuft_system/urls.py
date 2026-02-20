@@ -1,7 +1,7 @@
 from django.contrib import admin
-from django.urls import path
-from staff import views  # Імпортуємо наші views
-
+from django.urls import path, include
+from staff import views
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', include('staff.urls')),
 ]

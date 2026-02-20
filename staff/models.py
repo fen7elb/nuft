@@ -20,6 +20,8 @@ class Department(models.Model):
     short_name = models.CharField(max_length=50, blank=True, null=True, verbose_name="Абревіатура", db_comment='абревіатура')
     mail = models.CharField(max_length=100, blank=True, null=True, verbose_name="Email", db_comment='пошта кафедри/відділу')
     type_dep = models.ForeignKey(TypeDepartment, on_delete=models.CASCADE, verbose_name="Тип")
+    
+    show_in_structure = models.BooleanField(default=True, verbose_name="показувати в структурі")
 
     class Meta:
         managed = True

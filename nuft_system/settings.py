@@ -55,7 +55,7 @@ ROOT_URLCONF = 'nuft_system.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],  # Додайте цю лінію, якщо хочете зберігати шаблони в папці "templates" в корені проекту
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
