@@ -17,7 +17,6 @@ class Command(BaseCommand):
 
         self.stdout.write(self.style.WARNING('Починаємо розумний імпорт (оновлення)...'))
         
-        # Списки "живих" ID, щоб знати, кого НЕ видаляти
         active_department_ids = []
         active_employee_ids = []
         
@@ -36,7 +35,6 @@ class Command(BaseCommand):
             if sheet_name not in workbook.sheetnames:
                 continue
 
-            # Тип підрозділу створюємо або отримуємо
             type_dep, _ = TypeDepartment.objects.get_or_create(name_type=type_name)
             sheet = workbook[sheet_name]
             
@@ -56,7 +54,6 @@ class Command(BaseCommand):
                 # --- КАФЕДРА/ВІДДІЛ ---
                 if val0 and not val1:
                     raw_text = val0
-                    
                     found_email = re.search(r'[\w\.-]+@[\w\.-]+\.\w+', raw_text)
                     dept_mail = val2 
                     if found_email:
@@ -72,7 +69,7 @@ class Command(BaseCommand):
                     if clean_name.isupper():
                         clean_name = clean_name.capitalize()
 
-                    # Абревіатури для Інститутів/Факультетів
+                    # Абревіатури
                     short_val = None
                     if type_name in ['Інститут', 'Факультет']:
                         match_abbr = re.search(r'\((.*?)\)', clean_name)
@@ -81,7 +78,6 @@ class Command(BaseCommand):
                         else:
                             short_val = clean_name[:50]
 
-                    # Оновлюємо або створюємо (щоб ID не мінявся)
                     current_department, created = Department.objects.update_or_create(
                         name=clean_name,
                         defaults={
@@ -102,7 +98,6 @@ class Command(BaseCommand):
 
                     position_obj, _ = Position.objects.get_or_create(title=position_clean)
 
-                    # Оновлюємо або створюємо співробітника
                     employee, created = Employee.objects.update_or_create(
                         full_name=full_name_clean,
                         department=current_department,
@@ -115,13 +110,13 @@ class Command(BaseCommand):
                     )
                     active_employee_ids.append(employee.pk)
 
-        # Видаляємо тільки тих, кого НЕМАЄ в новому файлі
+        # Чистка
         deleted_emps, _ = Employee.objects.exclude(pk__in=active_employee_ids).delete()
         if deleted_emps:
-            self.stdout.write(self.style.WARNING(f'Видалено звільнених: {deleted_emps}'))
-
+             self.stdout.write(self.style.WARNING(f'Видалено звільнених: {deleted_emps}'))
+             
         deleted_depts, _ = Department.objects.exclude(pk__in=active_department_ids).delete()
         if deleted_depts:
-            self.stdout.write(self.style.WARNING(f'Видалено закритих: {deleted_depts}'))
+             self.stdout.write(self.style.WARNING(f'Видалено закритих: {deleted_depts}'))
 
-        self.stdout.write(self.style.SUCCESS('Імпорт завершено! База актуальна.'))
+        self.stdout.write(self.style.SUCCESS('Імпорт завершено! База оновлена.'))
