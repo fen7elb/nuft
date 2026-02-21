@@ -43,28 +43,38 @@
                     
                     {% if results %}
                         {% for person in results %}
-                            <div class="card mb-3">
+                           <div class="card mb-3">
                                 <div class="card-body">
-                                    <h5 class="card-title fw-bold mb-1">{{ person.full_name }}</h5>
-                                    <p class="text-muted small mb-2">{{ person.position.title }}</p>
+                                    <h5 class="card-title fw-bold mb-3 text-dark">{{ person.full_name }}</h5>
                                     
-                                    <div class="d-flex flex-wrap gap-2 mb-3">
-                                        <span class="badge bg-info text-dark">{{ person.department.name }}</span>
-                                        {% if person.office %}
-                                            <span class="badge bg-secondary">🚪 Каб: {{ person.office }}</span>
-                                        {% endif %}
+                                    <div class="mb-3">
+                                        {% for job in person.jobs %}
+                                            <div class="mb-2 pb-2 {% if not forloop.last %}border-bottom{% endif %}">
+                                                <p class="text-muted small mb-1 fw-medium">{{ job.position }}</p>
+                                                
+                                                <div class="d-flex flex-wrap gap-2">
+                                                    <span class="badge bg-info text-dark">{{ job.department }}</span>
+                                                    {% if job.office %}
+                                                        <span class="badge bg-secondary">🚪 Каб: {{ job.office }}</span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        {% endfor %}
                                     </div>
 
-                                    {% if person.phone_number %}
-                                        <span class="btn btn-success btn-sm btn-call px-3" style="cursor: default;">
-                                            📞 {{ person.phone_number }}
-                                        </span>
-                                    {% endif %}
-                                    {% if person.mail %}
-                                        <a href="mailto:{{ person.mail }}" class="btn btn-outline-secondary btn-sm btn-call px-3">
-                                            ✉️ Написати
-                                        </a>
-                                    {% endif %}
+                                    <div class="d-flex flex-wrap gap-2">
+                                        {% for phone in person.phones %}
+                                            <span class="btn btn-success btn-sm px-3" style="cursor: default;">
+                                                📞 {{ phone }}
+                                            </span>
+                                        {% endfor %}
+                                        
+                                        {% for mail in person.mails %}
+                                            <a href="mailto:{{ mail }}" class="btn btn-outline-secondary btn-sm px-3">
+                                                ✉️ Написати
+                                            </a>
+                                        {% endfor %}
+                                    </div>
                                 </div>
                             </div>
                         {% endfor %}

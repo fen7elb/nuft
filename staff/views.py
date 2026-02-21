@@ -3,19 +3,13 @@ from django.db.models import Q, Prefetch
 from .models import Employee, Department, TypeDepartment
 
 def home_search(request):
-    """
-    Головна сторінка з пошуком.
-    """
-    # Отримуємо те, що юзер ввів у рядок пошуку (name="q" в HTML-формі)
-    query = request.GET.get('q', '')
+    query = request.GET.get('q', '').strip()
     
-    # Створюємо порожній список результатів
-    results = []
+    final_results = []
     
-    # Якщо юзер щось ввів, починаємо шукати
     if query:
-        # Шукаємо співробітників, де запит збігається з ПІБ, телефоном АБО кабінетом
-        results = Employee.objects.filter(
+        # 1. Шукаємо як і раніше
+        raw_results = Employee.objects.filter(
             Q(full_name__icontains=query) |
             Q(phone_number__icontains=query) |
             Q(office__icontains=query) |
@@ -23,12 +17,41 @@ def home_search(request):
             Q(position__title__icontains=query) |
             Q(department__name__icontains=query) |
             Q(department__short_name__icontains=query)
-        ).select_related('department', 'position') # select_related для швидкості бази
+        ).select_related('department', 'position')
         
-    # Віддаємо словник контексту в HTML-шаблон
+        # 2. Групуємо людей за ПІБ
+        grouped_persons = {}
+        for person in raw_results:
+            name = person.full_name
+            
+            # Якщо таку людину бачимо вперше — створюємо для неї "контейнер"
+            if name not in grouped_persons:
+                grouped_persons[name] = {
+                    'full_name': name,
+                    'jobs': [], # Тут буде список усіх її посад і кафедр
+                    'phones': set(), # set() гарантує, що не буде однакових телефонів
+                    'mails': set()
+                }
+            
+            # Додаємо посаду в список цієї людини
+            grouped_persons[name]['jobs'].append({
+                'position': person.position.title if person.position else '',
+                'department': person.department.name if person.department else '',
+                'office': person.office
+            })
+            
+            # Додаємо контакти (якщо вони є)
+            if person.phone_number:
+                grouped_persons[name]['phones'].add(person.phone_number)
+            if person.mail:
+                grouped_persons[name]['mails'].add(person.mail)
+                
+        # 3. Перетворюємо наш словник назад у звичайний список для HTML
+        final_results = list(grouped_persons.values())
+
     context = {
         'query': query,
-        'results': results,
+        'results': final_results,
     }
     
     return render(request, 'staff/home.html', context)
