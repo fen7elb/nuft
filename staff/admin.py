@@ -3,7 +3,7 @@ from .models import Employee, Department, Position, TypeDepartment
 
 @admin.register(Employee)
 class EmployeeAdmin(admin.ModelAdmin):
-    list_display = ('full_name', 'phone_number', 'mail', 'department', 'position')
+    list_display = ('full_name', 'phone_number', 'mail', 'department', 'position', 'office')
     search_fields = ('full_name',) #факап з парсингом
     #list_filter = ('department', 'position') #факап з парсингом
 

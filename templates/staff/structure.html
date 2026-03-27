@@ -47,19 +47,71 @@
                      id="content-{{ dep_type.pk }}" role="tabpanel">
                     
                     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                        {% for dep in dep_type.department_set.all %}
+                                                {% for dep in dep_type.department_set.all %}
                             <div class="col">
-                                <div class="card h-100 dep-card p-3">
-                                    <h5 class="card-title fw-bold mb-2">{{ dep.name }}</h5>
+                                <div class="card h-100 dep-card p-3" 
+                                    style="cursor: pointer;" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#modalDep{{ dep.pk }}">
                                     
+                                    <h5 class="card-title fw-bold mb-2">{{ dep.name }}</h5>
                                     {% if dep.short_name %}
                                         <h6 class="card-subtitle mb-3 text-primary">{{ dep.short_name }}</h6>
                                     {% endif %}
-                                    
                                     <div class="mt-auto">
                                         {% if dep.mail %}
                                             <span class="text-muted small">✉️ {{ dep.mail }}</span>
                                         {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modal fade" id="modalDep{{ dep.pk }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+                                    <div class="modal-content">
+                                        
+                                        <div class="modal-header bg-light">
+                                            <div>
+                                                <h5 class="modal-title fw-bold text-primary mb-1">{{ dep.name }}</h5>
+                                                {% if dep.short_name %}
+                                                    <span class="badge bg-secondary">{{ dep.short_name }}</span>
+                                                {% endif %}
+                                            </div>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрити"></button>
+                                        </div>
+                                        
+                                        <div class="modal-body bg-light">
+                                            {% if dep.employee_set.all %}
+                                                {% for person in dep.employee_set.all %}
+                                                    <div class="card mb-2 shadow-sm border-0">
+                                                        <div class="card-body py-2">
+                                                            <h6 class="fw-bold mb-1">{{ person.full_name }}</h6>
+                                                            <p class="text-muted small mb-2">{{ person.position.title }}</p>
+                                                            
+                                                            <div class="d-flex flex-wrap gap-2">
+                                                                {% if person.office %}
+                                                                    <span class="badge bg-secondary">🚪 {{ person.office }}</span>
+                                                                {% endif %}
+                                                                {% if person.phone_number %}
+                                                                    <span class="badge bg-success">📞 {{ person.phone_number }}</span>
+                                                                {% endif %}
+                                                                {% if person.mail %}
+                                                                    <a href="mailto:{{ person.mail }}" class="badge bg-primary text-decoration-none">✉️ Написати</a>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                {% endfor %}
+                                            {% else %}
+                                                <div class="text-center text-muted py-4">
+                                                    Тут поки немає прив'язаних співробітників 😔
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрити</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

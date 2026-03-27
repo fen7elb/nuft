@@ -51,7 +51,7 @@ class Employee(models.Model):
     id_employee = models.AutoField(primary_key=True, db_comment='код співробітника')
     full_name = models.CharField(max_length=150, verbose_name="ПІБ", db_comment='ПІБ')
     
-    # ТУТ ВАЖЛИВО: max_length=20 (як у базі), on_delete=CASCADE (видаляти людину, якщо видалили посаду)
+    #max_length=20 (як у базі), on_delete=CASCADE (видаляти людину, якщо видалили посаду)
     phone_number = models.CharField(max_length=20, blank=True, null=True, verbose_name="Телефон", db_comment='номер телефону')
     mail = models.CharField(max_length=100, blank=True, null=True, verbose_name="Email", db_comment='особиста пошта')
     office = models.CharField(max_length=20, blank=True, null=True, verbose_name="Кабінет", db_comment='кабінет / аудиторія')

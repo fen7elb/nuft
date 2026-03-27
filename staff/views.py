@@ -70,10 +70,17 @@ def structure_view(request):
     Сторінка структури (акордеон).
     """
     
-    active_departments = Department.objects.filter(show_in_structure=True)
+    #active_departments = Department.objects.filter(show_in_structure=True)
+    active_departments = Department.objects.filter(show_in_structure=True).prefetch_related(
+        Prefetch('employee_set', queryset=Employee.objects.select_related('position'))
+    )
     
     # Дістаємо всі типи підрозділів і одразу "чіпляємо" до них їхні кафедри/відділи
     # prefetch_related робить так, щоб база не "зависла" від кількості запитів
+    #types = TypeDepartment.objects.prefetch_related(
+    #    Prefetch('department_set', queryset=active_departments)
+    #).all()
+
     types = TypeDepartment.objects.prefetch_related(
         Prefetch('department_set', queryset=active_departments)
     ).all()
