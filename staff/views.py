@@ -28,6 +28,7 @@ def home_search(request):
             if name not in grouped_persons:
                 grouped_persons[name] = {
                     'full_name': name,
+                    'photo_url': person.photo.url if person.photo else None,
                     'jobs': [], # Тут буде список усіх її посад і кафедр
                     'phones': set(), # set() гарантує, що не буде однакових телефонів
                     'mails': set()

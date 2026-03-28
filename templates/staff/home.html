@@ -45,8 +45,14 @@
                         {% for person in results %}
                            <div class="card mb-3">
                                 <div class="card-body">
-                                    <h5 class="card-title fw-bold mb-3 text-dark">{{ person.full_name }}</h5>
-                                    
+                                    <div class="d-flex align-items-center mb-3">
+                                        {% if person.photo_url %}
+                                            <img src="{{ person.photo_url }}" alt="{{ person.full_name }}" class="rounded-circle shadow-sm me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                                        {% endif %}
+                                        
+                                        <h5 class="card-title fw-bold mb-0 text-dark">{{ person.full_name }}</h5>
+                                    </div>
+                                                                        
                                     <div class="mb-3">
                                         {% for job in person.jobs %}
                                             <div class="mb-2 pb-2 {% if not forloop.last %}border-bottom{% endif %}">

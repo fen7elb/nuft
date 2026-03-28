@@ -55,6 +55,7 @@ class Employee(models.Model):
     phone_number = models.CharField(max_length=20, blank=True, null=True, verbose_name="Телефон", db_comment='номер телефону')
     mail = models.CharField(max_length=100, blank=True, null=True, verbose_name="Email", db_comment='особиста пошта')
     office = models.CharField(max_length=20, blank=True, null=True, verbose_name="Кабінет", db_comment='кабінет / аудиторія')
+    photo = models.ImageField(upload_to='employees_photos/', blank=True, null=True, verbose_name="Фотографія")
     
     department = models.ForeignKey(Department, on_delete=models.CASCADE, verbose_name="Підрозділ")
     position = models.ForeignKey(Position, on_delete=models.CASCADE, verbose_name="Посада")
