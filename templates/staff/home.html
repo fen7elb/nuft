@@ -39,7 +39,15 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 {% if query %}
-                    <p class="text-muted mb-3">Результати пошуку для: <strong>{{ query }}</strong></p>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <p class="text-muted mb-0">Результати пошуку для: <strong>{{ query }}</strong></p>
+                        
+                        {% if results %}
+                            <span class="badge bg-primary rounded-pill px-3 py-2 shadow-sm">
+                                Знайдено: {{ results|length }}
+                            </span>
+                        {% endif %}
+                    </div>
                     
                     {% if results %}
                         {% for person in results %}
