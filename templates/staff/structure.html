@@ -17,9 +17,12 @@
 <body>
     <div class="container mt-4 mb-5">
         
-        <div class="mb-4">
+        <div class="mb-4 d-flex justify-content-between align-items-center">
             <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
                 ⬅ Повернутися до пошуку
+            </a>
+            <a href="{% url 'print_full_structure' %}" target="_blank" class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm">
+                🖨️ Друк всього довідника
             </a>
         </div>
         
@@ -47,7 +50,7 @@
                      id="content-{{ dep_type.pk }}" role="tabpanel">
                     
                     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                                                {% for dep in dep_type.department_set.all %}
+                        {% for dep in dep_type.department_set.all %}
                             <div class="col">
                                 <div class="card h-100 dep-card p-3" 
                                     style="cursor: pointer;" 

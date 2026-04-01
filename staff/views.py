@@ -91,3 +91,27 @@ def structure_view(request):
     }
     
     return render(request, 'staff/structure.html', context)
+
+def print_full_structure(request):
+    """
+    Генерація сторінки для друку всієї структури університету
+    """
+    # Витягуємо всі типи підрозділів, їхні кафедри та всіх співробітників одразу
+    # order_by('name') і order_by('full_name') зроблять списки за алфавітом
+    types = TypeDepartment.objects.prefetch_related(
+        Prefetch(
+            'department_set', 
+            queryset=Department.objects.filter(show_in_structure=True).order_by('name').prefetch_related(
+                Prefetch(
+                    'employee_set', 
+                    queryset=Employee.objects.select_related('position').order_by('full_name')
+                )
+            )
+        )
+    ).all()
+    
+    context = {
+        'types': types,
+    }
+    
+    return render(request, 'staff/print_structure.html', context)
