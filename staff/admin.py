@@ -9,9 +9,9 @@ class EmployeeAdmin(admin.ModelAdmin):
 
 @admin.register(Department)
 class DepartmentAdmin(admin.ModelAdmin):
-    list_display = ('name', 'short_name', 'mail', 'type_dep', 'show_in_structure')
+    list_display = ('name', 'short_name', 'mail', 'type_dep', 'parent', 'show_in_structure')
     search_fields = ('name', 'short_name', 'mail', 'type_dep__name_type') #факап з парсингом
-    list_filter = ('type_dep', 'show_in_structure') #факап з парс
+    list_filter = ('type_dep', 'parent', 'show_in_structure') #факап з парс
     list_editable = ('show_in_structure',) #факап з парсингом
 
 @admin.register(Position)

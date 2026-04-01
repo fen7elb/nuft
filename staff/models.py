@@ -23,8 +23,18 @@ class Department(models.Model):
     
     show_in_structure = models.BooleanField(default=True, verbose_name="показувати в структурі")
 
+    # ДОДАЄМО ЗВ'ЯЗОК (Ієрархію)
+    parent = models.ForeignKey(
+        'self', 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True, 
+        related_name='sub_departments',
+        verbose_name="Підпорядковується (Факультет/Інститут)"
+    )
+
     class Meta:
-        managed = True
+        managed = True # Django керує цією таблицею
         db_table = 'department'
         verbose_name = "Підрозділ"
         verbose_name_plural = "Підрозділи"
