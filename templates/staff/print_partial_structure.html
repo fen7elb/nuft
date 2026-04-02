@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Друк - {% if single_dep %}{{ single_dep.name }}{% else %}{{ dep_type.name_type }}{% endif %}</title>
+    <style>
+        body { font-family: "Times New Roman", Times, serif; color: #000; background-color: #f4f4f4; margin: 0; padding: 20px; }
+        .document-container { background: #fff; max-width: 800px; margin: 0 auto; padding: 40px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .header { text-align: center; margin-bottom: 40px; border-bottom: 2px solid #000; padding-bottom: 20px; }
+        .header h1 { margin: 0; font-size: 24px; text-transform: uppercase; }
+        .header h2 { margin: 10px 0 0 0; font-size: 18px; font-weight: normal; }
+        .department-section { margin-top: 30px; margin-bottom: 30px; page-break-inside: avoid; }
+        .dep-title { font-size: 20px; font-weight: bold; text-transform: uppercase; background: #eee; padding: 5px; margin-bottom: 10px; }
+        .sub-dep-title { font-size: 16px; font-weight: bold; font-style: italic; margin-top: 20px; margin-bottom: 5px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; page-break-inside: avoid; }
+        th, td { border: 1px solid #000; padding: 8px; text-align: left; }
+        th { background-color: #f9f9f9; }
+        .controls { text-align: center; margin-bottom: 20px; }
+        .btn-print { padding: 10px 20px; font-size: 16px; background-color: #0d6efd; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        @media print {
+            body { background-color: #fff; padding: 0; }
+            .document-container { box-shadow: none; max-width: 100%; padding: 0; margin: 0; }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="controls no-print">
+        <button class="btn-print" onclick="window.print()">🖨️ Роздрукувати</button>
+    </div>
+
+    <div class="document-container">
+        <div class="header">
+            <h1>Національний університет харчових технологій</h1>
+            <h2>
+                {% if single_dep %}
+                    {{ single_dep.name }}
+                {% else %}
+                    Всі підрозділи: {{ dep_type.name_type }}
+                {% endif %}
+            </h2>
+            <p style="font-size: 12px; color: #555;">Згенеровано: {% now "d.m.Y H:i" %}</p>
+        </div>
+
+        {% for dep in departments %}
+            <div class="department-section">
+                <div class="dep-title">{{ dep.name }} {% if dep.short_name %}({{ dep.short_name }}){% endif %}</div>
+                {% if dep.mail %}<div style="font-size: 12px; margin-bottom: 10px;">Email: {{ dep.mail }}</div>{% endif %}
+
+                {% if dep.employee_set.all %}
+                    <table>
+                        <thead><tr><th style="width: 35%;">ПІБ (Керівництво/Деканат)</th><th style="width: 25%;">Посада</th><th style="width: 20%;">Кабінет</th><th style="width: 20%;">Телефон</th></tr></thead>
+                        <tbody>
+                            {% for emp in dep.employee_set.all %}
+                                <tr><td><b>{{ emp.full_name }}</b></td><td>{{ emp.position.title|default:"-" }}</td><td>{{ emp.office|default:"-" }}</td><td>{{ emp.phone_number|default:"-" }}</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+
+                {% if dep.sub_departments.all %}
+                    <div style="margin-top: 15px; padding-left: 15px; border-left: 3px solid #6c757d;">
+                        <h4 style="margin-bottom: 5px; color: #495057;">Підпорядковані кафедри:</h4>
+                        {% for sub_dep in dep.sub_departments.all %}
+                            <div class="sub-dep-title">{{ sub_dep.name }}</div>
+                            {% if sub_dep.employee_set.all %}
+                                <table>
+                                    <thead><tr><th style="width: 35%;">ПІБ</th><th style="width: 25%;">Посада</th><th style="width: 20%;">Кабінет</th><th style="width: 20%;">Телефон</th></tr></thead>
+                                    <tbody>
+                                        {% for emp in sub_dep.employee_set.all %}
+                                            <tr><td><b>{{ emp.full_name }}</b></td><td>{{ emp.position.title|default:"-" }}</td><td>{{ emp.office|default:"-" }}</td><td>{{ emp.phone_number|default:"-" }}</td></tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% else %}
+                                <p style="font-size: 14px; font-style: italic; color: #666;">Немає записів про співробітників.</p>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

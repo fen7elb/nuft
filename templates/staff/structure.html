@@ -79,6 +79,11 @@
                             </div>
                         </div>
                     {% endif %}
+                    <div class="d-flex justify-content-end mb-3">
+                        <a href="{% url 'print_department_type' dep_type.pk %}" target="_blank" class="btn btn-outline-secondary btn-sm shadow-sm">
+                            🖨️ Друк списку ({{ dep_type.name_type }})
+                        </a>
+                    </div>
                     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="cards-container-{{ dep_type.pk }}">
                         {% for dep in dep_type.department_set.all %}
                             <div class="col dep-card-item" data-parent="{{ dep.parent_id|default:'none' }}">
@@ -130,8 +135,11 @@
                                                 <div class="text-center text-muted py-4">Тут поки немає прив'язаних співробітників 😔</div>
                                             {% endif %}
                                         </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрити</button>
+                                        <div class="modal-footer d-flex justify-content-between w-100">
+                                            <a href="{% url 'print_specific_department' dep.pk %}" target="_blank" class="btn btn-primary btn-sm">
+                                                🖨️ Друк підрозділу
+                                            </a>
+                                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Закрити</button>
                                         </div>
                                     </div>
                                 </div>

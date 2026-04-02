@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.db.models import Q, Prefetch
 from .models import Employee, Department, TypeDepartment
 
@@ -94,3 +94,35 @@ def print_full_structure(request):
         'types': types,
     }
     return render(request, 'staff/print_structure.html', context)
+
+
+def print_department_type(request, pk):
+    """Друк всіх підрозділів певного типу (наприклад, Всі Факультети) з їхніми кафедрами"""
+    dep_type = get_object_or_404(TypeDepartment, pk=pk)
+    
+    departments = Department.objects.filter(type_dep=dep_type, show_in_structure=True).prefetch_related(
+        Prefetch('employee_set', queryset=Employee.objects.select_related('position').order_by('full_name')),
+        # Магія: витягуємо підпорядковані кафедри!
+        Prefetch('sub_departments', queryset=Department.objects.filter(show_in_structure=True).prefetch_related(
+            Prefetch('employee_set', queryset=Employee.objects.select_related('position').order_by('full_name'))
+        ).order_by('name'))
+    ).order_by('name')
+
+    return render(request, 'staff/print_partial_structure.html', {
+        'dep_type': dep_type,
+        'departments': departments
+    })
+
+def print_specific_department(request, pk):
+    """Друк ОДНОГО конкретного підрозділу (з модального вікна) та його кафедр"""
+    single_dep = get_object_or_404(Department.objects.prefetch_related(
+        Prefetch('employee_set', queryset=Employee.objects.select_related('position').order_by('full_name')),
+        Prefetch('sub_departments', queryset=Department.objects.filter(show_in_structure=True).prefetch_related(
+            Prefetch('employee_set', queryset=Employee.objects.select_related('position').order_by('full_name'))
+        ).order_by('name'))
+    ), pk=pk)
+
+    return render(request, 'staff/print_partial_structure.html', {
+        'single_dep': single_dep,
+        'departments': [single_dep] # Передаємо як список, щоб шаблон був універсальним
+    })
