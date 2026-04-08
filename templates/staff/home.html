@@ -32,16 +32,38 @@
             box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important;
         }
         .choices[data-type*="select-one"]::after { right: 20px; }
-        .choices__list--dropdown { border-radius: 15px !important; border: 1px solid #dee2e6 !important; box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important; z-index: 100 !important;}
-        .choices__input { background-color: #f8f9fa !important; border-radius: 10px !important; margin-bottom: 10px !important; border: 1px solid #dee2e6 !important;}
-        .choices__list--dropdown .choices__item--selectable.is-highlighted { background-color: #0d6efd !important; color: white !important; border-radius: 8px; margin: 0 5px;}
+        
+        /* --- ФІКС ДЛЯ ПЛАВНОСТІ І ДОВГИХ НАЗВ --- */
+        .choices__list--dropdown { 
+            border-radius: 15px !important; 
+            border: 1px solid #dee2e6 !important; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important; 
+            z-index: 100 !important;
+            padding: 5px !important; /* Загальний відступ всередині */
+        }
+        .choices__input { 
+            background-color: #f8f9fa !important; 
+            border-radius: 10px !important; 
+            margin-bottom: 10px !important; 
+            border: 1px solid #dee2e6 !important;
+        }
+        
+        /* Базовий вигляд кожного пункту (розміри не міняються при наведенні) */
         .choices__list--dropdown .choices__item--choice {
-            white-space: normal !important;      /* Дозволяємо тексту переноситися на нові рядки */
-            word-break: break-word !important;   /* Запобігаємо розриву довгих слів */
-            line-height: 1.4 !important;         /* Додаємо відстань між рядками, щоб не злипалося */
-            padding-top: 12px !important;        /* Збільшуємо відступи зверху... */
-            padding-bottom: 12px !important;     /* ...і знизу для кожного пункту */
-            font-size: 0.95rem !important;       /* Трошки акуратніший шрифт */
+            white-space: normal !important;      
+            word-break: break-word !important;   
+            line-height: 1.4 !important;         
+            padding: 10px 15px !important;       
+            font-size: 0.95rem !important;       
+            border-radius: 8px !important;       
+            margin-bottom: 2px !important;       
+            transition: background-color 0.1s;   
+        }
+        
+        /* Міняємо ТІЛЬКИ колір фону, без margin! */
+        .choices__list--dropdown .choices__item--selectable.is-highlighted { 
+            background-color: #0d6efd !important; 
+            color: white !important; 
         }
     </style>
 </head>
@@ -204,11 +226,11 @@
             const selects = document.querySelectorAll('.searchable-select');
             selects.forEach(select => {
                 new Choices(select, {
-                    searchEnabled: true,          // Вмикає поле пошуку
-                    itemSelectText: '',           // Прибирає зайвий текст "Натисніть для вибору"
-                    noResultsText: 'Нічого не знайдено', // Текст, якщо пошук не дав результатів
-                    shouldSort: false,            // Зберігає сортування з бекенду (алфавітне)
-                    searchPlaceholderValue: 'Пошук...' // Плейсхолдер для рядка пошуку
+                    searchEnabled: true,          
+                    itemSelectText: '',           
+                    noResultsText: 'Нічого не знайдено', 
+                    shouldSort: false,            
+                    searchPlaceholderValue: 'Пошук...' 
                 });
             });
         });
